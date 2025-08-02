@@ -3,47 +3,38 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"sync"
 )
 
 func main() {
 	const randomNumbersCount int = 10
-	const randomRange int = 100
+	const randomRange int = 101
 	randomNumberChannel := make(chan int, randomNumbersCount)
 	powChannel := make(chan int, randomNumbersCount)
-	wg := sync.WaitGroup{}
 	result := make([]int, 0)
 
-	for i := 1; i <= randomNumbersCount; i++ {
-		wg.Add(1)
-		go genRandomNumbers(randomRange, randomNumberChannel, &wg)
-	}
-
-	go func() {
-		wg.Wait()
-		close(randomNumberChannel)
-		close(powChannel)
-	}()
-
-	for randomNumber := range randomNumberChannel {
-		wg.Add(1)
-		go powNumbers(randomNumber, powChannel, &wg)
-	}
+	go genRandomNumbers(randomRange, randomNumbersCount, randomNumberChannel)
+	go powNumbers(randomNumberChannel, powChannel)
 
 	for powedNumber := range powChannel {
 		result = append(result, powedNumber)
 	}
 
-	fmt.Printf("%v\n", result)
+	for i := range result {
+		fmt.Printf("%d ", result[i])
+	}
 }
 
-func genRandomNumbers(randomRange int, channel chan int, wg *sync.WaitGroup) {
-	digit := rand.Intn(randomRange)
-	channel <- digit
-	wg.Done()
+func genRandomNumbers(randomRange int, randomNumbersCount int, channel chan int) {
+	for i := 1; i <= randomNumbersCount; i++ {
+		digit := rand.Intn(randomRange)
+		channel <- digit
+	}
+	close(channel)
 }
 
-func powNumbers(number int, channel chan int, wg *sync.WaitGroup) {
-	channel <- number * number
-	wg.Done()
+func powNumbers(channel chan int, powChannel chan int) {
+	for number := range channel {
+		powChannel <- number * number
+	}
+	close(powChannel)
 }
