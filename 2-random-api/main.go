@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	randomNumberRange = 7
+	randomNumberRange = 6
 )
 
 func main() {
@@ -26,5 +26,5 @@ func main() {
 }
 
 func getRandomNumber() []byte {
-	return []byte(strconv.Itoa(rand.Intn(randomNumberRange)))
+	return []byte(strconv.Itoa(rand.Intn(randomNumberRange) + 1))
 }
