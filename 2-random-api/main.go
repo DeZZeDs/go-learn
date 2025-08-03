@@ -6,6 +6,10 @@ import (
 	"strconv"
 )
 
+const (
+	randomNumberRange = 7
+)
+
 func main() {
 	router := http.NewServeMux()
 	server := http.Server{
@@ -22,5 +26,5 @@ func main() {
 }
 
 func getRandomNumber() []byte {
-	return []byte(strconv.Itoa(rand.Intn(7)))
+	return []byte(strconv.Itoa(rand.Intn(randomNumberRange)))
 }
