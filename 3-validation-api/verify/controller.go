@@ -27,6 +27,7 @@ func (handler *VerifyHandlerController) VerifySendHandler() http.HandlerFunc {
 
 func (handler *VerifyHandlerController) VerifyGetHash() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO
+		hash := r.PathValue("hash")
+		w.Write([]byte("your hash " + hash + ": true"))
 	}
 }
